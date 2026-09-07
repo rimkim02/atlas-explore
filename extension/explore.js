@@ -263,6 +263,28 @@
   document.getElementById("siteCount").textContent = SITES.length;
   apply();
 
+  // ----- hero image particles -----
+  (function seedParticles() {
+    const host = document.getElementById("heroMedia");
+    if (!host || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement("span");
+      p.className = "particle";
+      const size = (2 + Math.random() * 4).toFixed(1);
+      p.style.width = p.style.height = size + "px";
+      p.style.left = (-12 + Math.random() * 124).toFixed(1) + "%";
+      p.style.top = (-12 + Math.random() * 124).toFixed(1) + "%";
+      p.style.setProperty("--dur", (3 + Math.random() * 3.5).toFixed(2) + "s");
+      p.style.setProperty("--dx", (Math.random() * 16 - 8).toFixed(1) + "px");
+      p.style.setProperty("--dy", (Math.random() * 16 - 8).toFixed(1) + "px");
+      p.style.animationDelay = (-Math.random() * 5).toFixed(2) + "s";
+      if (Math.random() < 0.35) p.style.background = "var(--text-primary)";
+      frag.appendChild(p);
+    }
+    host.appendChild(frag);
+  })();
+
   // ----- scroll-to-top FAB -----
   const scrollTop = document.getElementById("scrollTop");
   scrollTop.hidden = false;
