@@ -22,12 +22,15 @@ FAB는 모든 `http(s)` 페이지에 Shadow DOM으로 주입되어 사이트 CSS
 ## 파일
 
 ```
-manifest.json     MV3 매니페스트 (permissions: storage)
-background.js     service worker — 툴바 아이콘 클릭 시 Explore 열기
-content.js        모든 페이지에 FAB 주입 (Shadow DOM), 즐겨찾기 스택
+manifest.json      MV3 매니페스트 (permissions: storage)
+background.js      service worker — 툴바 아이콘 클릭 시 Explore 열기
+content.js         모든 페이지에 FAB 주입 (Shadow DOM), 즐겨찾기 스택
 explore.html/.css/.js   FAB 클릭 시 열리는 Explore 페이지
-data.js           공유 데이터 — 180개 사이트, 태그 색상, 3그룹 정의
-icons/            16 / 48 / 128 px 아이콘 (Atlas 마크)
+                   (2열 히어로 + Download CTA + Starred 탭 + 스크롤 탑 버튼)
+data.js            공유 데이터 — 180개 사이트, 태그 색상, 3그룹 정의
+Image.png          히어로 우측 이미지
+custom cursor.svg  Explore 페이지 전역 커서
+icons/             16 / 48 / 128 px 아이콘 (Atlas 마크)
 ```
 
 ## 웹 데모와의 관계

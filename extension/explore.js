@@ -262,4 +262,12 @@
 
   document.getElementById("siteCount").textContent = SITES.length;
   apply();
+
+  // ----- scroll-to-top FAB -----
+  const scrollTop = document.getElementById("scrollTop");
+  scrollTop.hidden = false;
+  const onScroll = () => scrollTop.classList.toggle("is-visible", window.scrollY > 500);
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+  scrollTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 })();
