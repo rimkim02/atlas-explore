@@ -39,6 +39,20 @@
     chrome.storage.local.set({ favorites: list });
   }
 
+  // ----- recently visited (chrome.storage.local) -----
+  const RECENT_MAX = 12;
+  let recent = [];
+  function recordVisit(s) {
+    recent = [{ n: s.n, u: s.u, domain: s.domain }].concat(recent.filter(r => r.domain !== s.domain)).slice(0, RECENT_MAX);
+    chrome.storage.local.set({ recent: recent });
+    renderRecent();
+  }
+  function removeRecent(domain) {
+    recent = recent.filter(r => r.domain !== domain);
+    chrome.storage.local.set({ recent: recent });
+    renderRecent();
+  }
+
   // ----- state -----
   const active = new Set();
   let query = "";
@@ -141,6 +155,7 @@
     img.src = thumbURL(s.u);
     img.addEventListener("error", () => thumb.classList.add("is-broken"));
     thumb.appendChild(img);
+    thumb.addEventListener("click", () => recordVisit(s));
 
     const body = document.createElement("div");
     body.className = "card-body";
@@ -151,10 +166,7 @@
     name.target = "_blank";
     name.rel = "noopener noreferrer";
     name.textContent = s.n;
-
-    const domain = document.createElement("div");
-    domain.className = "card-domain";
-    domain.textContent = s.domain;
+    name.addEventListener("click", () => recordVisit(s));
 
     const desc = document.createElement("p");
     desc.className = "card-desc";
@@ -182,7 +194,7 @@
     });
 
     foot.append(tags, star);
-    body.append(name, domain, desc, foot);
+    body.append(name, desc, foot);
     card.append(thumb, body);
     groupEls[s.group].grid.appendChild(card);
     cardIndex.push({ s, el: card, star });
@@ -243,6 +255,32 @@
     if (favStat) favStat.textContent = favorites.size;
   }
 
+  // ----- recently visited row -----
+  const recentRow = document.getElementById("recentRow");
+  const recentList = document.getElementById("recentList");
+  const XICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  function renderRecent() {
+    recentList.innerHTML = "";
+    recentRow.hidden = recent.length === 0;
+    recent.forEach(r => {
+      const chip = document.createElement("span");
+      chip.className = "recent-chip";
+      const link = document.createElement("a");
+      link.href = r.u;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = r.n;
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "recent-del";
+      del.setAttribute("aria-label", "Remove " + r.n + " from recent");
+      del.innerHTML = XICON;
+      del.addEventListener("click", () => removeRecent(r.domain));
+      chip.append(link, del);
+      recentList.appendChild(chip);
+    });
+  }
+
   searchInput.addEventListener("input", () => {
     query = searchInput.value.trim().toLowerCase();
     apply();
@@ -256,21 +294,30 @@
     apply();
   });
 
-  // ----- load favorites, then render -----
-  chrome.storage.local.get({ favorites: [] }, ({ favorites: saved }) => {
-    (saved || []).forEach(f => favorites.add(f.domain));
+  // ----- load favorites + recents, then render -----
+  chrome.storage.local.get({ favorites: [], recent: [] }, (data) => {
+    (data.favorites || []).forEach(f => favorites.add(f.domain));
+    recent = (data.recent || []).slice(0, RECENT_MAX);
     syncStars();
+    renderRecent();
     apply();
   });
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area !== "local" || !changes.favorites) return;
-    favorites.clear();
-    (changes.favorites.newValue || []).forEach(f => favorites.add(f.domain));
-    syncStars();
-    apply();
+    if (area !== "local") return;
+    if (changes.favorites) {
+      favorites.clear();
+      (changes.favorites.newValue || []).forEach(f => favorites.add(f.domain));
+      syncStars();
+      apply();
+    }
+    if (changes.recent) {
+      recent = (changes.recent.newValue || []).slice(0, RECENT_MAX);
+      renderRecent();
+    }
   });
 
   document.getElementById("siteCount").textContent = SITES.length;
+  renderRecent();
   apply();
 
   // ----- scroll-to-top FAB -----

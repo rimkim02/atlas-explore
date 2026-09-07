@@ -113,7 +113,7 @@
   }
   .hero-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
     gap: 40px;
     align-items: start;
   }
@@ -122,6 +122,7 @@
   .hero-media {
     justify-self: end;
     width: 100%;
+    max-width: 324px;
     border-radius: 24px;
     overflow: hidden;
   }
@@ -129,9 +130,7 @@
     display: block;
     width: 100%;
     height: auto;
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .hero-media:hover img { transform: scale(1.05); }
 
   .eyebrow {
     font-size: 12px;
@@ -235,12 +234,12 @@
 
   .section-head { margin-bottom: 24px; max-width: 60ch; }
   .section-head h2 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 500;
-    margin: 0 0 6px;
+    margin: 0 0 8px;
   }
   .section-head p {
-    font-size: 13.5px;
+    font-size: 16px;
     color: var(--text-secondary);
     margin: 0;
   }
@@ -320,6 +319,68 @@
   }
   .clear-btn:hover { color: var(--text-primary); border-color: var(--text-muted); }
   .clear-btn[hidden] { display: none; }
+
+  /* ---------- Recently visited ---------- */
+  .recent-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0 14px;
+    min-width: 0;
+  }
+  .recent-row[hidden] { display: none; }
+  .recent-label {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .recent-list {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .recent-list::-webkit-scrollbar { display: none; }
+  .recent-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    padding: 4px 5px 4px 13px;
+    background: transparent;
+    transition: border-color 0.15s ease;
+  }
+  .recent-chip:hover { border-color: var(--text-muted); }
+  .recent-chip > a {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .recent-chip:hover > a { color: var(--text-primary); }
+  .recent-del {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: var(--cur-link);
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .recent-del:hover { color: var(--text-primary); background: var(--bg-elevated); }
+  .recent-del svg { width: 11px; height: 11px; }
 
   .tag-filter {
     display: flex;
@@ -455,13 +516,6 @@
     text-decoration: none;
   }
   .card-name:hover { color: var(--accent); }
-
-  .card-domain {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    color: var(--text-muted);
-    word-break: break-all;
-  }
 
   .card-desc {
     font-size: 13px;
@@ -679,7 +733,6 @@
     .fab-dock { right: 16px; bottom: 16px; }
     .group-head { flex-direction: column; gap: 6px; }
     .hero-grid { grid-template-columns: 1fr; gap: 28px; }
-    .hero-media { max-width: 380px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -738,8 +791,8 @@
   <section class="library" id="explore">
     <div class="wrap">
       <div class="section-head">
-        <h2>The starter library</h2>
-        <p>Every site Atlas ships with on install, folded into three scan groups. Tags stay as the fine filter &mdash; they combine, so <code>Web</code> + <code>Motion</code> + <code>Inspiration</code> shows only sites carrying all three. Star a site to pin it to the FAB.</p>
+        <h2>Explore</h2>
+        <p>Sites you star are pinned to the FAB in Chrome, so you can jump to them from any page.</p>
       </div>
 
       <div class="toolbar">
@@ -752,6 +805,10 @@
           </label>
           <span class="result-count" id="resultCount"></span>
           <button type="button" class="clear-btn" id="clearBtn" hidden>Clear filters</button>
+        </div>
+        <div class="recent-row" id="recentRow" hidden>
+          <span class="recent-label">Recent</span>
+          <div class="recent-list" id="recentList"></div>
         </div>
         <div class="tag-filter" id="tagFilter" role="group" aria-label="Filter by tag"></div>
       </div>
@@ -1067,6 +1124,28 @@
     catch (e) { /* ignore */ }
   }
 
+  // ----- Recently visited -----
+  const RECENT_KEY = "atlas.recent";
+  const RECENT_MAX = 12;
+  let recent = [];
+  try {
+    const raw = localStorage.getItem(RECENT_KEY);
+    if (raw) recent = JSON.parse(raw).slice(0, RECENT_MAX);
+  } catch (e) { /* ignore */ }
+  function saveRecent() {
+    try { localStorage.setItem(RECENT_KEY, JSON.stringify(recent)); } catch (e) { /* ignore */ }
+  }
+  function recordVisit(s) {
+    recent = [{ n: s.n, u: s.u, domain: s.domain }].concat(recent.filter(r => r.domain !== s.domain)).slice(0, RECENT_MAX);
+    saveRecent();
+    renderRecent();
+  }
+  function removeRecent(domain) {
+    recent = recent.filter(r => r.domain !== domain);
+    saveRecent();
+    renderRecent();
+  }
+
   // ----- State -----
   const active = new Set();
   let query = "";
@@ -1167,6 +1246,7 @@
     img.src = thumbURL(s.u);
     img.addEventListener("error", () => thumb.classList.add("is-broken"));
     thumb.appendChild(img);
+    thumb.addEventListener("click", () => recordVisit(s));
 
     const body = document.createElement("div");
     body.className = "card-body";
@@ -1177,10 +1257,7 @@
     name.target = "_blank";
     name.rel = "noopener noreferrer";
     name.textContent = s.n;
-
-    const domain = document.createElement("div");
-    domain.className = "card-domain";
-    domain.textContent = s.domain;
+    name.addEventListener("click", () => recordVisit(s));
 
     const desc = document.createElement("p");
     desc.className = "card-desc";
@@ -1204,7 +1281,7 @@
     star.addEventListener("click", () => toggleFavorite(s));
 
     foot.append(tags, star);
-    body.append(name, domain, desc, foot);
+    body.append(name, desc, foot);
     card.append(thumb, body);
     groupEls[s.group].grid.appendChild(card);
     cardIndex.push({ s: s, el: card, star: star });
@@ -1303,6 +1380,7 @@
       a.target = "_blank";
       a.rel = "noopener noreferrer";
       a.setAttribute("role", "menuitem");
+      a.addEventListener("click", () => recordVisit(c.s));
       const label = document.createElement("span");
       label.textContent = c.s.n;
       const go = document.createElement("span");
@@ -1310,6 +1388,33 @@
       go.textContent = "↗";
       a.append(label, go);
       favStack.appendChild(a);
+    });
+  }
+
+  // ----- Recently visited row -----
+  const recentRow = document.getElementById("recentRow");
+  const recentList = document.getElementById("recentList");
+  const XICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+
+  function renderRecent() {
+    recentList.innerHTML = "";
+    recentRow.hidden = recent.length === 0;
+    recent.forEach(r => {
+      const chip = document.createElement("span");
+      chip.className = "recent-chip";
+      const link = document.createElement("a");
+      link.href = r.u;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = r.n;
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "recent-del";
+      del.setAttribute("aria-label", "Remove " + r.n + " from recent");
+      del.innerHTML = XICON;
+      del.addEventListener("click", () => removeRecent(r.domain));
+      chip.append(link, del);
+      recentList.appendChild(chip);
     });
   }
 
@@ -1341,6 +1446,7 @@
   document.getElementById("siteCount").textContent = SITES.length;
   updateFavCount();
   renderFavStack();
+  renderRecent();
   apply();
 </script>
 </body>
