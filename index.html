@@ -124,8 +124,8 @@
     font-family: var(--font-hero);
     font-weight: 400;
     font-size: clamp(2.75rem, 11vw, 100px);
-    line-height: 1.04;
-    letter-spacing: normal;
+    line-height: 90px;
+    letter-spacing: -0.04em;
     text-wrap: balance;
     margin: 0 0 26px;
   }
@@ -650,6 +650,7 @@
 
   @media (max-width: 560px) {
     .hero { padding: 60px 0 48px; }
+    .hero-line { line-height: 1.06; }
     .wrap { padding: 0 18px; }
     .site-header { padding: 12px 18px; }
     .fab-dock { right: 16px; bottom: 16px; }

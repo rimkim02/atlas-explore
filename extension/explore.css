@@ -63,8 +63,8 @@ a[href], button, label.search, [role="button"] { cursor: var(--cur-link); }
 }
 .hero h1 {
   font-family: var(--font-hero); font-weight: 400;
-  font-size: clamp(2.5rem, 8vw, 76px); line-height: 1.05;
-  letter-spacing: normal; margin: 0 0 20px; text-wrap: balance;
+  font-size: clamp(2.5rem, 8vw, 76px); line-height: 90px;
+  letter-spacing: -0.04em; margin: 0 0 20px; text-wrap: balance;
 }
 .hero h1 .accent { color: var(--accent); }
 .hero p { font-size: 15px; color: var(--text-secondary); margin: 0 0 24px; max-width: 46ch; }
@@ -234,6 +234,7 @@ button.tag[aria-pressed="true"] { opacity: 1; }
 @media (max-width: 560px) {
   .wrap { padding: 0 18px; }
   .site-header { padding: 12px 0; }
+  .hero h1 { line-height: 1.06; }
   .group-head { flex-direction: column; gap: 6px; }
   .viewnav { display: flex; width: 100%; overflow-x: auto; }
 }
