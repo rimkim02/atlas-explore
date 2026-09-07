@@ -8,6 +8,8 @@
 
 이 문서는 Atlas 프로젝트의 문제 정의부터 리서치, 경쟁 분석, 서비스 정의, 기능 설계, 데이터/기술 구조, 디자인 시스템까지의 전체 기획 과정을 정리한 문서입니다. 애자일 + 디자인씽킹 방식으로 "가설 → 검증 → 학습"을 반복하며 진행했고, 진행 중 실제 데이터(설문·경쟁사 리서치·실제 사이트 목록)를 반영해 초기안에서 몇 차례 수정된 지점은 그대로 기록해두었습니다.
 
+현재 웹 데모(`index.html`)와 크롬 확장 프로그램(`extension/`)이 모두 구현되어 GitHub(`rimkim02/atlas-explore`)에 있습니다. 구현 내용은 11절 참고.
+
 ---
 
 ## 1. 문제 가설 (Problem Hypothesis)
@@ -29,7 +31,7 @@
 | 저장 채널 상위 | Chrome 북마크, Pinterest |
 | 필요 기능 1순위 | 작업 종류별 추천 사이트 |
 
-※ 해당 리서치는 nn명의 소규모 설문으로, 방향성 참고용이며 정량 결론 근거로는 표본 확대가 필요합니다.
+※ 해당 리서치는 소규모 설문으로, 방향성 참고용이며 정량 결론 근거로는 표본 확대가 필요합니다.
 
 ### Empathy Map
 
@@ -42,7 +44,7 @@
 
 - **표면적 니즈**: 빠르게 다시 찾고 싶다 (속도)
 - **히든 니즈**: 이전 참고와의 일관성을 지키고, 내 디자인 결정에 대한 확신을 유지하고 싶다 (심리적 안정감)
-- 근거: 피드백 반영(재작업) 단계에서 재검색 실패가 가장 고통스러웠던 이유는 시간 손실만이 아니라, 이전 결정과 다른 방향으로 흘러갈지 모른다는 불안감이었다 (n=8 기반 추론 — 정성 인터뷰로 추가 검증 필요).
+- 근거: 피드백 반영(재작업) 단계에서 재검색 실패가 가장 고통스러웠던 이유는 시간 손실만이 아니라, 이전 결정과 다른 방향으로 흘러갈지 모른다는 불안감이었다 (소규모 설문 기반 추론 — 정성 인터뷰로 추가 검증 필요).
 
 ---
 
@@ -97,16 +99,18 @@
 **개요**
 > 브라우저를 벗어나지 않고 카테고리 버튼 하나로 필요한 에셋 사이트 묶음을 즉시 다시 여는 크롬 확장. 새 저장소로 이전할 필요 없이 기존 저장 습관 위에 그대로 얹혀 작동한다.
 
-**히어로 카피 (v2, 변경)**
-- ~~Saving stays the same. Reopening takes a second.~~ (기존)
-- **Explore Design Resources** (변경 — "재진입 속도" 강조에서 "리소스 탐색" 강조로 히어로 메시지 톤 전환)
+**히어로 카피 (변경 이력)**
+- ~~Saving stays the same. Reopening takes a second.~~ (v1 — "재진입 속도" 강조)
+- ~~Explore Design Resources~~ (v2 — "리소스 탐색"으로 톤 전환)
+- **Explore / Your Design Sites** (v3, 현재 — "내가 쓰는 사이트"라는 개인화 톤. "Explore" 다음 줄바꿈, DM Sans)
 
 **주요 기능**
-- 카테고리 FAB 퀵오픈 — 버튼 한 번으로 사이트 묶음 오픈
-- **즐겨찾기 (Favorites) — 신규**: 저장된 사이트 중 자주 쓰는 사이트를 개별로 즐겨찾기 지정. FAB 호버 시 즐겨찾기 사이트가 버튼 스택으로 바로 노출되어, Explore 페이지 진입 없이도 최단 경로로 접근 가능
-- 저장 시 도메인 매핑 기반 자동 태그 추천
+- 카테고리 FAB 퀵오픈 — 버튼 한 번으로 Explore 페이지 오픈
+- **즐겨찾기 (Favorites)**: 사이트를 개별로 즐겨찾기(★) 지정. FAB 호버 시 즐겨찾기 사이트가 버튼 스택으로 바로 노출되어 Explore 진입 없이 최단 경로 접근. Explore 상단 세그먼트 네비의 "Starred" 탭으로도 모아 보기
+- **최근 방문 (Recent) — 신규**: 카드에서 연 사이트를 검색바 아래에 이름 칩으로 최근순 노출(최대 12개). 칩마다 개별 삭제 가능
+- 다중 태그 조합 필터 + 3그룹 세그먼트 네비게이션 (7절)
 - 새 탭 오픈 — 원 작업 탭 보존, 흐름 유지
-- 기존 저장 습관 연동 — 북마크·Pinterest 매핑
+- 저장 시 도메인 매핑 기반 자동 태그 추천 · 기존 저장 습관(북마크·Pinterest) 연동 (후속)
 
 ---
 
@@ -138,34 +142,55 @@
 | Pink (크리에이티브 아이덴티티) | Branding, Graphic Design |
 | Red (커뮤니케이션) | Email |
 
-**실제 분류 데이터**: 실제 디자인 리소스 사이트 180개를 위 태그로 전량 분류 완료 (`Atlas_tagged.csv`). 상위 태그는 Inspiration(99), Web(64), Library(29), App(24) 순.
+**실제 분류 데이터**: 실제 디자인 리소스 사이트 180개를 위 태그로 전량 분류 + 영문 설명 작성 완료. 목록은 `index.html`과 `extension/data.js`에 인라인(동일 데이터). 상위 태그는 Inspiration(102), Library(55), Web(53), App(21) 순.
 
 > v1의 "지금 작업 단계"라는 통찰 자체는 여전히 유효합니다. 다만 이를 고정된 탭 구조가 아니라, 다중 태그 조합 필터(예: Web + Motion + Inspiration)로 사용자가 그때그때 조합해서 쓰는 방식으로 구현 방향을 바꿨습니다.
 
-### 7-3. Explore 페이지 카드 그룹 — 3분류 (v3, 신규)
+### 7-3. Explore 페이지 카드 그룹 — 3분류 (v3, 구현)
 
-FAB 클릭 시 이동하는 Explore 페이지에서는, 22개 태그를 다시 3개의 상위 그룹 타이틀로 묶어 카드 섹션으로 보여줍니다. 태그는 필터링용 세부 단위로 유지하고, 이 3그룹은 페이지 전체의 큰 스캔 단위 역할을 합니다.
+Explore 페이지에서는 22개 태그를 다시 3개의 상위 그룹 타이틀로 묶어 카드 섹션으로 보여줍니다. 태그는 필터링용 세부 단위로 유지하고, 이 3그룹은 페이지 전체의 큰 스캔 단위 역할을 합니다.
 
-| 그룹 타이틀 | 성격 | 포함 태그 (제안) |
+| 그룹 타이틀 | 성격 | 포함 태그 |
 |---|---|---|
 | **Reference** | 보고 참고하는 레퍼런스·사례 | Web, App, UX, Branding, Graphic Design, Portfolio, Inspiration, Ecommerce, Email |
 | **Visual Asset Explore** | 실제로 다운로드해 작업에 쓰는 소재 | Icon, Font, Image, Color, Mockup, 3D |
 | **Experimental Design Opensource** | 컴포넌트·모션·도구 등 코드/기술 기반 리소스 | Component, Design System, Motion, Interaction, Tool, AI Design, Library |
 
-> 이 3그룹 매핑은 1차 제안입니다. 실제 180개 분류 데이터(7-2)와 대조해 그룹별 사이트 수 균형을 확인한 뒤 조정이 필요합니다.
+사이트가 여러 그룹에 걸치면 `Visual Asset Explore → Reference → Experimental Design Opensource` 우선순위로 한 그룹에 배치합니다. 현재 그룹별 사이트 수는 대략 Reference 103 / Visual Asset Explore 61 / Experimental Design Opensource 16 — Reference 편중이 있어 후속 조정 여지가 있습니다.
+
+### 7-4. 인페이지 네비게이션 — 세그먼트 컨트롤 (구현)
+
+카드 리스트 위에 3그룹을 전환하는 세그먼트 컨트롤을 둡니다. 라운드(pill) 스타일, 높이 60px, 선택된 탭은 브랜드 라임으로 채움.
+
+| 탭 | 내용 |
+|---|---|
+| **All** | 3그룹 전체 |
+| **Starred** | 즐겨찾기한 사이트만 |
+| **Reference** | Reference 그룹 |
+| **Design Asset** | Visual Asset Explore 그룹 |
+| **Tools** | Experimental Design Opensource 그룹 |
+
+검색과 태그 필터(AND 조합)는 선택된 탭과 무관하게 항상 함께 동작합니다.
+
+### 7-5. 카드 디자인 (구현)
+
+- 카드 상단에 웹사이트 썸네일(스크린샷) — 이미지 corner radius 16, 카드 안쪽 여백 8
+- 썸네일 → 제목(18px) → 설명 → 태그 + 즐겨찾기(★). 썸네일과 제목이 링크(새 탭)
+- 카드 corner radius 24, 카드 간 간격 4px, 외곽 스트로크 없음
+- 썸네일은 WordPress mShots 스크린샷 서비스 사용 (API 키 불필요). 진짜 `og:image`는 서버 사이드 페치가 필요해 후속 과제 (12절)
 
 ---
 
-## 8. FAB 인터랙션 명세 (신규)
+## 8. FAB 인터랙션 명세 (구현)
 
-크롬 확장 설치 후 FAB의 클릭과 호버 동작을 분리합니다.
+FAB의 클릭과 호버 동작을 분리합니다. "탐색"(클릭)과 "최단 경로 재접근"(호버, 즐겨찾기)이라는 서로 다른 의도를 나눠서 처리하며, 즐겨찾기 기능이 곧 FAB 호버 스택의 데이터 소스입니다.
 
-| 동작 | 결과 |
-|---|---|
-| **클릭** | Explore 페이지로 이동 (7-3의 3그룹 카드 화면) |
-| **호버** | 즐겨찾기(6절)한 사이트들이 버튼 스택 형태로 즉시 노출 → 클릭 시 해당 사이트로 바로 이동 (새 탭, 원 작업 탭 보존) |
+| 동작 | 웹 데모 (`index.html`) | 크롬 확장 |
+|---|---|---|
+| **클릭** | Explore 섹션으로 스크롤 | Explore 페이지를 새 탭으로 오픈 |
+| **호버 / 포커스** | 즐겨찾기 사이트가 버튼 스택으로 노출 → 클릭 시 새 탭 | 동일 |
 
-클릭은 "탐색"(Explore Design Resources 히어로 카피와 일치), 호버는 "최단 경로 재접근"(즐겨찾기)이라는 서로 다른 의도를 분리해서 처리합니다. 즉 즐겨찾기 기능이 곧 FAB 호버 스택의 데이터 소스입니다.
+크롬 확장에서 FAB는 모든 `http(s)` 페이지에 Shadow DOM으로 주입되어 사이트 CSS와 충돌하지 않습니다. 툴바 아이콘 클릭도 Explore 페이지를 엽니다. FAB 아이콘 자체는 SVG를 인라인 임베드해 외부 파일 유실 문제를 없앴습니다.
 
 ---
 
@@ -177,61 +202,90 @@ FAB 클릭 시 이동하는 Explore 페이지에서는, 22개 태그를 다시 3
 
 ```json
 {
-  "site_001": {
-    "url": "https://dribbble.com/shots/xxxx",
-    "domain": "dribbble.com",
-    "type": ["App", "Web", "Branding", "Inspiration"],
-    "favorite": false,
-    "pinned": false,
-    "savedAt": "2026-09-01T10:12:00Z",
-    "lastOpenedAt": "2026-09-05T14:30:00Z"
-  }
+  "favorites": [
+    { "n": "Dribbble", "u": "https://dribbble.com", "domain": "dribbble.com" }
+  ],
+  "recent": [
+    { "n": "Awwwards", "u": "https://www.awwwards.com", "domain": "awwwards.com" }
+  ]
 }
 ```
 
-> v1 스키마의 `type`(단일값) + `stage`(배열) 구조에서, v2 태그 체계에 맞춰 `type`을 배열(다중 태그)로, `stage` 필드는 제거하는 방향으로 업데이트가 필요합니다. 이번 업데이트로 `favorite`(불리언) 필드가 추가되어, FAB 호버 스택은 `favorite: true`인 레코드만 조회합니다. (아직 확장 코드에는 미반영)
+- v1 스키마의 `type`(단일값) + `stage`(배열) → v2 태그 체계에 맞춰 `type` 배열화 + `stage` 제거 **반영 완료**.
+- `favorites`: 즐겨찾기 목록. FAB 호버 스택의 데이터 소스. 확장은 `chrome.storage.local`(설치된 모든 탭에 `storage.onChanged`로 실시간 동기화), 웹 데모는 `localStorage` 키 `atlas.favorites`.
+- `recent`: 최근 방문 이력(최근순, 최대 12개). 카드 썸네일/제목 클릭 시 기록. 확장 `chrome.storage.local` / 웹 데모 `localStorage` 키 `atlas.recent`.
+- 확장 데이터 접근 권한은 `permissions: ["storage"]` 하나. 호스트 권한은 콘텐츠 스크립트 매치(`http(s)://*/*`)로 대체.
 
 ### 9-2. 인프라 (웹 데모/향후 계정 동기화용, 선택 확장)
 
-| 영역 | 서비스 |
-|---|---|
-| 코드 저장소 | GitHub (Public) |
-| DB | Supabase (Row Level Security 적용) |
-| 서버리스 API | Cloudflare Workers |
-| 웹 배포 | Vercel (GitHub 연동 자동 배포) |
-| 도메인 | Spaceship |
+| 영역 | 서비스 | 상태 |
+|---|---|---|
+| 코드 저장소 | GitHub — `rimkim02/atlas-explore` | **적용 (Private)** |
+| DB | Supabase (Row Level Security) | 선택 확장 |
+| 서버리스 API | Cloudflare Workers (og:image 페치 등) | 선택 확장 |
+| 웹 배포 | Vercel (GitHub 연동 자동 배포) | 선택 확장 |
+| 도메인 | Spaceship | 선택 확장 |
 
-확장 프로그램 자체는 이 인프라 없이도 로컬에서 완결됩니다. 웹 랜딩 페이지나 여러 기기 간 동기화가 필요해지는 시점에 붙이는 것을 권장합니다.
+웹 데모는 현재 단일 HTML 파일로 저장소/로컬에서 바로 실행되고, 확장도 로컬에서 완결됩니다. Supabase 동기화·Vercel 배포·서버리스 API는 계정 기능이나 실제 og:image가 필요해지는 시점에 붙입니다.
 
 ---
 
 ## 10. 디자인 시스템
 
 - **브랜드명**: Atlas
-- **브랜드 컬러**: 라임 그린 `#DAFF48` (로고 기준, 강조 요소에만 제한적으로 사용)
+- **브랜드 컬러**: 라임 그린 `#DAFF48` (로고 기준, 강조 요소에만 제한적으로 사용 — primary CTA, 선택된 세그먼트 탭, FAB, 검색바 포커스, 즐겨찾기 활성)
 - **테마**: 다크 UI — `#121214`(base) → `#1B1B1E`(surface) → `#232327`(elevated)
 - **텍스트**: `#F5F5F7`(primary) / `#9A9AA2`(secondary) / `#6B6B72`(muted)
 - **UI 폰트**: Roboto — 헤딩·버튼·라벨 500 / 본문 400 (두 굵기만 사용)
-- **히어로 포인트 서체**: DM Sans Regular(400) — 랜딩 히어로 문구("Explore Design Resources") 전용, 나머지 UI는 전부 Roboto
-- **태그**: Notion 스타일, corner radius 8px, 10개 색상군 (7-2 참고)
+- **히어로 포인트 서체**: DM Sans Regular(400) — 히어로 문구("Explore / Your Design Sites") 전용. 데스크톱 ~58px, line-height 1.02, letter-spacing −4%. 나머지 UI는 전부 Roboto
+- **태그**: Notion 스타일, corner radius 8px, 10개 색상군 (7-2 참고). 선택 시 스트로크 없이 흐림/선명(opacity)으로만 구분
+- **카드**: corner radius 24px, 썸네일 corner radius 16px, 카드 간 간격 4px, 외곽 스트로크 없음
+- **세그먼트 컨트롤**: pill, 높이 60px, 선택 탭 라임 채움
+- **검색바**: corner radius 999px, 포커스 시 라임 스트로크
+- **커서**: 사이트 전역 커스텀 커서 (`custom cursor.svg`)
+- **divider**: 컨테이너 구분용 얇은 스트로크는 제거. 스티키 헤더–툴바 경계만 divider를 유지해 스크롤 콘텐츠가 사이로 비치지 않게 함
 - 상세 스타일 가이드: `atlas-design-system.html` 참고
 
 ---
 
-## 11. 프로토타입 현황
+## 11. 구현 현황
 
-- Manifest V3 크롬 확장 프로그램 (`reopen-extension/`) 로컬 테스트 가능
-- 도메인 매핑 기반 자동 태그 추천, 새 탭 오픈, 저사용 카테고리 고정 노출 등 v1 로직 구현 완료
-- 설치 시 기본 제공되는 사이트 180개 목록 확보 및 태그 분류 완료 (`Atlas_tagged.csv`)
-- **미반영**: 확장 코드는 아직 v1(단계×유형) 구조이며, 즐겨찾기 필드·FAB 호버 스택·Explore 3그룹 페이지·히어로 카피 변경이 모두 설계 단계로만 존재하고 코드에는 반영되지 않음
+웹 데모와 크롬 확장 두 산출물이 모두 구현되어 GitHub(`rimkim02/atlas-explore`, Private)에 있습니다.
+
+### 웹 데모 — `index.html`
+
+- 단일 HTML 파일, 전체 영문 UI, 빌드 불필요 (외부 의존성 Google Fonts만)
+- 히어로 "Explore / Your Design Sites" + 옆에 이미지(인라인 임베드) + "Get the Chrome extension" CTA / "View on GitHub"
+- 검색바 · 최근 방문 칩 · 22태그 AND 필터 · 세그먼트 네비(All / Starred / Reference / Design Asset / Tools) · 3그룹 카드(썸네일)
+- 즐겨찾기 → `localStorage`. FAB(우하단): 클릭 = Explore 스크롤 / 호버 = 즐겨찾기 스택
+- 전역 커스텀 커서. Sign up은 헤더 우상단 텍스트 버튼만 (기능 없음)
+
+### 크롬 확장 — `extension/` (Manifest V3)
+
+| 파일 | 역할 |
+|---|---|
+| `manifest.json` | MV3 매니페스트 (`permissions: ["storage"]`, 아이콘 16/48/128) |
+| `content.js` | 모든 페이지에 FAB 주입 (Shadow DOM). 클릭 = Explore 새 탭 / 호버 = 즐겨찾기 스택 |
+| `background.js` | service worker — 툴바 아이콘 클릭 시 Explore 오픈 |
+| `explore.html` / `.css` / `.js` | FAB로 여는 Explore 페이지 (웹 데모와 동일 구성 + Download CTA + 스크롤 탑 버튼) |
+| `data.js` | 180개 사이트 · 태그 색상 · 3그룹 정의 공유 |
+| `icons/` | 16 / 48 / 128 px 아이콘 (Atlas 마크) |
+
+- 즐겨찾기 · 최근 방문 → `chrome.storage.local`. `storage.onChanged`로 설치된 모든 탭이 실시간 동기화
+- 설치: `chrome://extensions` → 개발자 모드 → "압축해제된 확장 프로그램을 로드합니다" → `extension/` 폴더
+
+### 데이터
+
+실제 디자인 리소스 사이트 180개를 22태그로 전량 분류 + 영문 설명 작성. `index.html`과 `extension/data.js`에 동일하게 인라인.
 
 ---
 
 ## 12. 다음 단계
 
-1. 확장 프로그램 데이터 모델을 v2(다중 태그) + `favorite` 필드 구조로 리팩터링
-2. FAB 클릭(Explore 이동) / 호버(즐겨찾기 스택) 두 인터랙션 분리 구현
-3. Explore 페이지 3그룹(Reference / Visual Asset Explore / Experimental Design Opensource) 카드 레이아웃 설계
-4. 로고·디자인 시스템, 새 히어로 카피("Explore Design Resources")를 실제 화면에 반영
-5. Lo-fi 프로토타입으로 카테고리 클릭 → 목표 사이트 도달 10초 이내 지표 검증 (5인 내외 사용성 테스트)
-6. 검증 결과에 따라 다음 가설(저장 시 카테고리 태그 자동화 정확도 등) 수립
+1. 실동작 프로토타입으로 "카드 클릭 → 목표 사이트 도달 10초 이내" 지표 사용성 테스트 (5인 내외)
+2. 카드 썸네일을 스크린샷 서비스 대신 실제 `og:image` 기반으로 (서버리스 함수 + 캐시)
+3. 사용자가 직접 사이트를 추가하는 흐름 + 저장 시 도메인 매핑 자동 태그 추천 (현재는 180개 프리셋만)
+4. 웹 데모 배포(Vercel), 필요 시 계정 간 동기화(Supabase)
+5. Chrome Web Store 심사용 패키징 (아이콘·스토어 스크린샷·개인정보 처리방침)
+6. `data.js` ↔ `index.html` 목록 이중 관리 해소 (빌드 스텝 또는 단일 소스)
+7. 검증 결과에 따라 다음 가설 수립
