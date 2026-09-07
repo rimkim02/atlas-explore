@@ -238,6 +238,7 @@ FAB의 클릭과 호버 동작을 분리합니다. "탐색"(클릭)과 "최단 �
 - **텍스트**: `#F5F5F7`(primary) / `#9A9AA2`(secondary) / `#6B6B72`(muted)
 - **UI 폰트**: Roboto — 헤딩·버튼·라벨 500 / 본문 400 (두 굵기만 사용)
 - **히어로 포인트 서체**: DM Sans Regular(400) — 히어로 문구("Explore / Your Design Sites") 전용. 데스크톱 ~58px, line-height 1.02, letter-spacing −4%. 나머지 UI는 전부 Roboto
+- **히어로 배경 애니메이션**: ThreeUI `PredictiveArcCanvas`(data-pixel variant, MIT)를 vanilla로 이식. 라임(`#DAFF48`) 픽셀 아크, 최대 픽셀 불투명도 60%, 텍스트 위로는 스크림으로 감쇠
 - **태그**: Notion 스타일, corner radius 8px, 10개 색상군 (7-2 참고). 선택 시 스트로크 없이 흐림/선명(opacity)으로만 구분
 - **카드**: corner radius 24px, 썸네일 corner radius 16px, 카드 간 간격 4px, 외곽 스트로크 없음
 - **세그먼트 컨트롤**: pill, 높이 60px, 선택 탭 라임 채움
