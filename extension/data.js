@@ -29,6 +29,7 @@
 
   root.ATLAS_VIEWS = [
     { id: "all", label: "All", group: null },
+    { id: "starred", label: "Starred", starred: true },
     { id: "reference", label: "Reference", group: "Reference" },
     { id: "asset", label: "Design Asset", group: "Visual Asset Explore" },
     { id: "tools", label: "Tools", group: "Experimental Design Opensource" }

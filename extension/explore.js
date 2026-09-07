@@ -43,6 +43,11 @@
   const active = new Set();
   let query = "";
   let currentView = "all";
+  function inView(view, s) {
+    if (view.starred) return favorites.has(s.domain);
+    if (view.group) return s.group === view.group;
+    return true;
+  }
 
   // ----- helpers -----
   function tagChip(name, withCount) {
@@ -86,6 +91,9 @@
 
   // ----- build groups + cards -----
   const groupsRoot = document.getElementById("groups");
+  const groupsEmpty = document.createElement("p");
+  groupsEmpty.className = "groups-empty";
+  groupsEmpty.hidden = true;
   const cardIndex = [];
   const groupEls = {};
 
@@ -112,6 +120,7 @@
     groupsRoot.appendChild(section);
     groupEls[g.key] = { section, grid, count: head.querySelector(".group-count"), empty };
   });
+  groupsRoot.appendChild(groupsEmpty);
 
   SITES.forEach(s => {
     const card = document.createElement("article");
@@ -124,8 +133,30 @@
     name.className = "card-name";
     name.textContent = s.n;
 
-    const actions = document.createElement("div");
-    actions.className = "card-actions";
+    const open = document.createElement("a");
+    open.className = "card-open";
+    open.href = s.u;
+    open.target = "_blank";
+    open.rel = "noopener noreferrer";
+    open.setAttribute("aria-label", "Open " + s.n + " in a new tab");
+    open.textContent = "↗";
+
+    top.append(name, open);
+
+    const domain = document.createElement("div");
+    domain.className = "card-domain";
+    domain.textContent = s.domain;
+
+    const desc = document.createElement("p");
+    desc.className = "card-desc";
+    desc.textContent = s.d;
+
+    const foot = document.createElement("div");
+    foot.className = "card-foot";
+
+    const tags = document.createElement("div");
+    tags.className = "card-tags";
+    s.t.forEach(t => tags.appendChild(tagChip(t, false)));
 
     const star = document.createElement("button");
     star.type = "button";
@@ -138,32 +169,11 @@
       favorites.has(s.domain) ? favorites.delete(s.domain) : favorites.add(s.domain);
       persist();
       syncStars();
+      apply();
     });
 
-    const open = document.createElement("a");
-    open.className = "card-open";
-    open.href = s.u;
-    open.target = "_blank";
-    open.rel = "noopener noreferrer";
-    open.setAttribute("aria-label", "Open " + s.n + " in a new tab");
-    open.textContent = "↗";
-
-    actions.append(star, open);
-    top.append(name, actions);
-
-    const domain = document.createElement("div");
-    domain.className = "card-domain";
-    domain.textContent = s.domain;
-
-    const desc = document.createElement("p");
-    desc.className = "card-desc";
-    desc.textContent = s.d;
-
-    const tags = document.createElement("div");
-    tags.className = "card-tags";
-    s.t.forEach(t => tags.appendChild(tagChip(t, false)));
-
-    card.append(top, domain, desc, tags);
+    foot.append(tags, star);
+    card.append(top, domain, desc, foot);
     groupEls[s.group].grid.appendChild(card);
     cardIndex.push({ s, el: card, star });
   });
@@ -187,25 +197,27 @@
     let shown = 0;
 
     cardIndex.forEach(c => {
-      const ok = matches(c.s);
-      c.el.hidden = !ok;
-      if (ok) {
-        perGroup[c.s.group]++;
-        if (!view.group || view.group === c.s.group) shown++;
-      }
+      const visible = matches(c.s) && inView(view, c.s);
+      c.el.hidden = !visible;
+      if (visible) { shown++; perGroup[c.s.group]++; }
     });
 
     GROUP_DEFS.forEach(g => {
       const ge = groupEls[g.key];
       const n = perGroup[g.key];
       ge.count.textContent = n + (n === 1 ? " site" : " sites");
-      ge.empty.hidden = n !== 0;
-      ge.section.hidden = view.group ? view.group !== g.key : false;
+      ge.empty.hidden = true;
+      ge.section.hidden = n === 0;
     });
+
+    groupsEmpty.hidden = shown !== 0;
+    groupsEmpty.textContent = view.starred && favorites.size === 0
+      ? "No favorites yet — tap the ★ on a card to pin it here and to the FAB."
+      : "Nothing matches this combination. Try removing a tag.";
 
     viewButtons.forEach(b => {
       const v = VIEWS.find(x => x.id === b.dataset.view);
-      const n = v.group ? perGroup[v.group] : Object.values(perGroup).reduce((a, x) => a + x, 0);
+      const n = cardIndex.filter(c => matches(c.s) && inView(v, c.s)).length;
       b.querySelector(".vn-count").textContent = n;
     });
 
@@ -245,6 +257,7 @@
     favorites.clear();
     (changes.favorites.newValue || []).forEach(f => favorites.add(f.domain));
     syncStars();
+    apply();
   });
 
   document.getElementById("siteCount").textContent = SITES.length;

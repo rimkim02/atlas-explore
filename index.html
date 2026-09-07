@@ -73,7 +73,6 @@
     background: rgba(18, 18, 20, 0.82);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
   }
 
   .brand {
@@ -109,9 +108,8 @@
   /* ---------- Hero ---------- */
   .hero {
     padding: 88px 0 64px;
-    border-bottom: 1px solid var(--border);
   }
-  .hero-inner { max-width: 720px; }
+  .hero-inner { max-width: 860px; }
 
   .eyebrow {
     font-size: 12px;
@@ -125,11 +123,11 @@
   .hero-line {
     font-family: var(--font-hero);
     font-weight: 400;
-    font-size: clamp(2rem, 5.4vw, 3.35rem);
-    line-height: 1.16;
-    letter-spacing: -0.015em;
+    font-size: clamp(2.75rem, 11vw, 100px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
     text-wrap: balance;
-    margin: 0 0 22px;
+    margin: 0 0 26px;
   }
   .hero-line .accent { color: var(--accent); }
 
@@ -245,7 +243,6 @@
     -webkit-backdrop-filter: blur(12px);
     padding: 16px 0 14px;
     margin-bottom: 26px;
-    border-bottom: 1px solid var(--border);
   }
 
   .search-line {
@@ -263,10 +260,13 @@
     gap: 9px;
     background: var(--bg-elevated);
     border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    padding: 9px 12px;
+    border-radius: 999px;
+    padding: 10px 16px;
+    transition: border-color 0.15s ease;
   }
+  .search:focus-within { border-color: var(--accent); }
   .search svg { flex-shrink: 0; color: var(--text-muted); }
+  .search:focus-within svg { color: var(--accent); }
   .search input {
     flex: 1;
     background: transparent;
@@ -333,18 +333,16 @@
     font-family: var(--font-ui);
   }
   button.tag:hover { opacity: 0.85; }
-  button.tag[aria-pressed="true"] {
-    opacity: 1;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent);
-  }
+  button.tag[aria-pressed="true"] { opacity: 1; }
 
   /* ---------- In-page nav (segmented control) ---------- */
   .viewnav {
     display: inline-flex;
-    gap: 2px;
+    align-items: center;
+    height: 60px;
+    gap: 4px;
     margin-bottom: 30px;
-    padding: 4px;
+    padding: 6px;
     background: var(--bg-surface);
     border: 1px solid var(--border);
     border-radius: 999px;
@@ -352,12 +350,15 @@
   .viewnav button {
     appearance: none;
     border: none;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
     background: transparent;
     color: var(--text-secondary);
     font-family: var(--font-ui);
     font-weight: 500;
-    font-size: 13px;
-    padding: 7px 15px;
+    font-size: 13.5px;
+    padding: 0 20px;
     border-radius: 999px;
     cursor: var(--cur-link);
     white-space: nowrap;
@@ -365,17 +366,16 @@
   }
   .viewnav button:hover { color: var(--text-primary); }
   .viewnav button[aria-selected="true"] {
-    background: var(--bg-elevated);
-    color: var(--text-primary);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    background: var(--accent);
+    color: var(--accent-text);
   }
   .viewnav .vn-count {
     font-size: 11px;
     color: var(--text-muted);
-    margin-left: 5px;
+    margin-left: 6px;
     font-variant-numeric: tabular-nums;
   }
-  .viewnav button[aria-selected="true"] .vn-count { color: var(--text-secondary); }
+  .viewnav button[aria-selected="true"] .vn-count { color: rgba(20, 21, 10, 0.6); }
 
   @media (max-width: 560px) {
     .viewnav { display: flex; width: 100%; overflow-x: auto; }
@@ -385,7 +385,7 @@
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
-    gap: 8px;
+    gap: 4px;
   }
 
   .card {
@@ -393,14 +393,13 @@
     flex-direction: column;
     gap: 10px;
     background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 32px;
+    border: none;
+    border-radius: 24px;
     padding: 24px;
-    transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+    transition: transform 0.15s ease, background 0.15s ease;
   }
   .card:hover {
-    border-color: var(--border-strong);
-    background: #1e1e21;
+    background: #212125;
     transform: translateY(-2px);
   }
 
@@ -411,41 +410,16 @@
     gap: 10px;
   }
   .card-name {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
     margin: 0;
     line-height: 1.3;
   }
-  .card-actions {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    margin: -3px -3px 0 0;
-  }
-  .card-star {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 14px;
-    line-height: 1;
-    border-radius: 50%;
-    cursor: var(--cur-link);
-    transition: color 0.15s ease, background 0.15s ease, transform 0.15s ease;
-  }
-  .card-star:hover { color: var(--text-secondary); background: var(--bg-elevated); }
-  .card-star:active { transform: scale(0.88); }
-  .card-star[aria-pressed="true"] { color: var(--accent); }
   .card-open {
     flex-shrink: 0;
     width: 30px;
     height: 30px;
-    margin: 0;
+    margin: -3px -3px 0 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -475,15 +449,43 @@
     overflow: hidden;
   }
 
+  .card-foot {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 6px;
+  }
   .card-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: auto;
-    padding-top: 4px;
   }
   .card-tags button.tag { opacity: 0.92; }
   .card-tags button.tag:hover { opacity: 1; }
+
+  .card-star {
+    flex-shrink: 0;
+    align-self: flex-end;
+    margin: 0 -4px -4px 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1;
+    border-radius: 50%;
+    cursor: var(--cur-link);
+    transition: color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  }
+  .card-star:hover { color: var(--text-secondary); background: var(--bg-elevated); }
+  .card-star:active { transform: scale(0.88); }
+  .card-star[aria-pressed="true"] { color: var(--accent); }
 
   /* ---------- Explore groups (planning doc §7-3) ---------- */
   #groups { display: flex; flex-direction: column; gap: 52px; }
@@ -494,9 +496,7 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
-    padding-bottom: 14px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
   }
   .group-titles { max-width: 64ch; }
   .group-titles h3 {
@@ -521,6 +521,13 @@
     color: var(--text-muted);
     font-size: 13px;
     margin: 4px 0 0;
+  }
+  .groups-empty {
+    color: var(--text-muted);
+    font-size: 14px;
+    text-align: center;
+    padding: 64px 20px;
+    margin: 0;
   }
 
   /* ---------- FAB dock — the Chrome-extension FAB (planning doc §8) ---------- */
@@ -622,7 +629,6 @@
 
   /* ---------- Footer ---------- */
   .site-footer {
-    border-top: 1px solid var(--border);
     padding: 40px 0 56px;
   }
   .footer-inner {
@@ -995,11 +1001,17 @@
   // ----- In-page nav: segmented control over the 3 groups -----
   const VIEWS = [
     { id: "all", label: "All", group: null },
+    { id: "starred", label: "Starred", starred: true },
     { id: "reference", label: "Reference", group: "Reference" },
     { id: "asset", label: "Design Asset", group: "Visual Asset Explore" },
     { id: "tools", label: "Tools", group: "Experimental Design Opensource" },
   ];
   let currentView = "all";
+  function inView(view, s) {
+    if (view.starred) return favorites.has(s.domain);
+    if (view.group) return s.group === view.group;
+    return true;
+  }
 
   // ----- Favorites — feeds the FAB hover stack (planning doc §6 & §8) -----
   const FAV_KEY = "atlas.favorites";
@@ -1059,6 +1071,9 @@
 
   // ----- Cards, grouped -----
   const groupsRoot = document.getElementById("groups");
+  const groupsEmpty = document.createElement("p");
+  groupsEmpty.className = "groups-empty";
+  groupsEmpty.hidden = true;
   const cardIndex = [];      // { s, el, star }
   const groupEls = {};       // key -> { section, grid, count, empty }
 
@@ -1087,6 +1102,7 @@
     groupsRoot.appendChild(section);
     groupEls[g.key] = { section, grid, count: head.querySelector(".group-count"), empty };
   });
+  groupsRoot.appendChild(groupsEmpty);
 
   SITES.forEach(s => {
     const card = document.createElement("article");
@@ -1099,8 +1115,30 @@
     name.className = "card-name";
     name.textContent = s.n;
 
-    const actions = document.createElement("div");
-    actions.className = "card-actions";
+    const open = document.createElement("a");
+    open.className = "card-open";
+    open.href = s.u;
+    open.target = "_blank";
+    open.rel = "noopener noreferrer";
+    open.setAttribute("aria-label", "Open " + s.n + " in a new tab");
+    open.textContent = "↗";
+
+    top.append(name, open);
+
+    const domain = document.createElement("div");
+    domain.className = "card-domain";
+    domain.textContent = s.domain;
+
+    const desc = document.createElement("p");
+    desc.className = "card-desc";
+    desc.textContent = s.d;
+
+    const foot = document.createElement("div");
+    foot.className = "card-foot";
+
+    const tags = document.createElement("div");
+    tags.className = "card-tags";
+    s.t.forEach(t => tags.appendChild(tagChip(t, { count: false })));
 
     const star = document.createElement("button");
     star.type = "button";
@@ -1112,30 +1150,8 @@
     star.title = "Favorite";
     star.addEventListener("click", () => toggleFavorite(s));
 
-    const open = document.createElement("a");
-    open.className = "card-open";
-    open.href = s.u;
-    open.target = "_blank";
-    open.rel = "noopener noreferrer";
-    open.setAttribute("aria-label", "Open " + s.n + " in a new tab");
-    open.textContent = "↗";
-
-    actions.append(star, open);
-    top.append(name, actions);
-
-    const domain = document.createElement("div");
-    domain.className = "card-domain";
-    domain.textContent = s.domain;
-
-    const desc = document.createElement("p");
-    desc.className = "card-desc";
-    desc.textContent = s.d;
-
-    const tags = document.createElement("div");
-    tags.className = "card-tags";
-    s.t.forEach(t => tags.appendChild(tagChip(t, { count: false })));
-
-    card.append(top, domain, desc, tags);
+    foot.append(tags, star);
+    card.append(top, domain, desc, foot);
     groupEls[s.group].grid.appendChild(card);
     cardIndex.push({ s: s, el: card, star: star });
   });
@@ -1158,23 +1174,28 @@
     let shown = 0;
 
     cardIndex.forEach(c => {
-      const ok = matches(c.s);
-      c.el.hidden = !ok;
-      if (ok) { perGroup[c.s.group]++; if (!view.group || view.group === c.s.group) shown++; }
+      const visible = matches(c.s) && inView(view, c.s);
+      c.el.hidden = !visible;
+      if (visible) { shown++; perGroup[c.s.group]++; }
     });
 
     GROUP_DEFS.forEach(g => {
       const ge = groupEls[g.key];
       const n = perGroup[g.key];
       ge.count.textContent = n + (n === 1 ? " site" : " sites");
-      ge.empty.hidden = n !== 0;
-      ge.section.hidden = view.group ? view.group !== g.key : false;
+      ge.empty.hidden = true;
+      ge.section.hidden = n === 0;
     });
 
-    // nav counts
+    groupsEmpty.hidden = shown !== 0;
+    groupsEmpty.textContent = view.starred && favorites.size === 0
+      ? "No favorites yet — tap the ★ on a card to pin it here and to the FAB."
+      : "Nothing matches this combination. Try removing a tag.";
+
+    // nav counts (respect search + tags, ignore the active view)
     viewButtons.forEach(b => {
       const v = VIEWS.find(x => x.id === b.dataset.view);
-      const n = v.group ? perGroup[v.group] : Object.values(perGroup).reduce((a, x) => a + x, 0);
+      const n = cardIndex.filter(c => matches(c.s) && inView(v, c.s)).length;
       b.querySelector(".vn-count").textContent = n;
     });
 
@@ -1254,6 +1275,7 @@
     });
     updateFavCount();
     renderFavStack();
+    apply();
   }
 
   // FAB click → jump to the Explore groups (planning doc §8: click = explore)
