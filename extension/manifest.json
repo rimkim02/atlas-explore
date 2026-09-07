@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Atlas — Explore Design Resources",
+  "version": "1.0.0",
+  "description": "Keep your saved design-asset sites one hover away. Click the FAB to explore the library by group; hover it for your starred favorites.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Atlas — Explore Design Resources",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": { "service_worker": "background.js" },
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
