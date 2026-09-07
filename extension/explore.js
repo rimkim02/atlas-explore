@@ -122,26 +122,35 @@
   });
   groupsRoot.appendChild(groupsEmpty);
 
+  const thumbURL = u => "https://s.wordpress.com/mshots/v1/" + encodeURIComponent(u) + "?w=640&h=400";
+
   SITES.forEach(s => {
     const card = document.createElement("article");
     card.className = "card";
 
-    const top = document.createElement("div");
-    top.className = "card-top";
+    const thumb = document.createElement("a");
+    thumb.className = "card-thumb";
+    thumb.href = s.u;
+    thumb.target = "_blank";
+    thumb.rel = "noopener noreferrer";
+    thumb.setAttribute("aria-label", "Open " + s.n + " in a new tab");
+    const img = document.createElement("img");
+    img.loading = "lazy";
+    img.alt = "";
+    img.referrerPolicy = "no-referrer";
+    img.src = thumbURL(s.u);
+    img.addEventListener("error", () => thumb.classList.add("is-broken"));
+    thumb.appendChild(img);
 
-    const name = document.createElement("h4");
+    const body = document.createElement("div");
+    body.className = "card-body";
+
+    const name = document.createElement("a");
     name.className = "card-name";
+    name.href = s.u;
+    name.target = "_blank";
+    name.rel = "noopener noreferrer";
     name.textContent = s.n;
-
-    const open = document.createElement("a");
-    open.className = "card-open";
-    open.href = s.u;
-    open.target = "_blank";
-    open.rel = "noopener noreferrer";
-    open.setAttribute("aria-label", "Open " + s.n + " in a new tab");
-    open.textContent = "↗";
-
-    top.append(name, open);
 
     const domain = document.createElement("div");
     domain.className = "card-domain";
@@ -173,7 +182,8 @@
     });
 
     foot.append(tags, star);
-    card.append(top, domain, desc, foot);
+    body.append(name, domain, desc, foot);
+    card.append(thumb, body);
     groupEls[s.group].grid.appendChild(card);
     cardIndex.push({ s, el: card, star });
   });
@@ -230,7 +240,7 @@
 
   function syncStars() {
     cardIndex.forEach(c => c.star.setAttribute("aria-pressed", favorites.has(c.s.domain) ? "true" : "false"));
-    favStat.textContent = favorites.size;
+    if (favStat) favStat.textContent = favorites.size;
   }
 
   searchInput.addEventListener("input", () => {
@@ -262,28 +272,6 @@
 
   document.getElementById("siteCount").textContent = SITES.length;
   apply();
-
-  // ----- hero image particles -----
-  (function seedParticles() {
-    const host = document.getElementById("heroMedia");
-    if (!host || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const frag = document.createDocumentFragment();
-    for (let i = 0; i < 18; i++) {
-      const p = document.createElement("span");
-      p.className = "particle";
-      const size = (2 + Math.random() * 4).toFixed(1);
-      p.style.width = p.style.height = size + "px";
-      p.style.left = (-12 + Math.random() * 124).toFixed(1) + "%";
-      p.style.top = (-12 + Math.random() * 124).toFixed(1) + "%";
-      p.style.setProperty("--dur", (3 + Math.random() * 3.5).toFixed(2) + "s");
-      p.style.setProperty("--dx", (Math.random() * 16 - 8).toFixed(1) + "px");
-      p.style.setProperty("--dy", (Math.random() * 16 - 8).toFixed(1) + "px");
-      p.style.animationDelay = (-Math.random() * 5).toFixed(2) + "s";
-      if (Math.random() < 0.35) p.style.background = "var(--text-primary)";
-      frag.appendChild(p);
-    }
-    host.appendChild(frag);
-  })();
 
   // ----- scroll-to-top FAB -----
   const scrollTop = document.getElementById("scrollTop");
