@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Atlas Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=DM+Sans:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #121214;
+    --bg-surface: #1B1B1E;
+    --bg-elevated: #232327;
+    --border: #2E2E33;
+    --border-strong: #3B3B41;
+    --text-primary: #F5F5F7;
+    --text-secondary: #9A9AA2;
+    --text-muted: #6B6B72;
+    --accent: #DAFF48;
+    --accent-text: #14150A;
+    --font-ui: 'Roboto', sans-serif;
+    --font-hero: 'DM Sans', sans-serif;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-tag: 8px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    line-height: 1.5;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 56px 32px 96px; }
+  header.top { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+  header.top svg { height: 32px; width: auto; }
+  .kicker { color: var(--text-muted); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; margin: 40px 0 4px; }
+  h1 { font-size: 28px; font-weight: 500; margin: 0 0 40px; color: var(--text-primary); }
+  h2 { font-size: 20px; font-weight: 500; margin: 0 0 4px; }
+  p.desc { color: var(--text-secondary); font-size: 14px; margin: 0 0 20px; }
+  section { margin-bottom: 48px; }
+
+  .hero {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 40px 36px; margin-bottom: 12px;
+  }
+  .hero .hero-line {
+    font-family: var(--font-hero); font-weight: 400; font-size: 34px;
+    color: var(--text-primary); margin: 0 0 8px; line-height: 1.3;
+  }
+  .hero .hero-line .accent { color: var(--accent); }
+  .hero .hero-sub { font-family: var(--font-ui); font-size: 14px; color: var(--text-secondary); margin: 0; }
+
+  .swatch-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .swatch { border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+  .swatch-fill { height: 64px; }
+  .swatch-meta { padding: 10px 12px; background: var(--bg-surface); }
+  .swatch-meta .name { font-size: 12.5px; font-weight: 500; display: block; }
+  .swatch-meta .hex { font-size: 11.5px; color: var(--text-muted); font-family: monospace; }
+
+  .type-row { display: flex; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .type-row:last-child { border-bottom: none; }
+  .type-sample { flex: 1; }
+  .type-label { width: 160px; color: var(--text-muted); font-size: 12px; font-family: monospace; flex-shrink: 0; }
+
+  .tag-group-title { font-size: 12px; color: var(--text-muted); margin: 18px 0 8px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .tag {
+    display: inline-flex; align-items: center; padding: 4px 12px;
+    border-radius: var(--radius-tag); font-size: 12.5px; font-weight: 500;
+  }
+
+  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 640px) { .comp-grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 20px;
+  }
+  .card .card-title { font-weight: 500; font-size: 14.5px; margin: 0 0 4px; }
+  .card .card-sub { font-size: 12.5px; color: var(--text-muted); margin: 0 0 14px; word-break: break-all; }
+
+  .btn-primary {
+    background: var(--accent); color: var(--accent-text);
+    border: none; border-radius: var(--radius-sm);
+    font-family: var(--font-ui); font-weight: 700; font-size: 13.5px;
+    padding: 10px 18px; cursor: pointer;
+  }
+  .btn-secondary {
+    background: transparent; color: var(--text-primary);
+    border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+    font-family: var(--font-ui); font-weight: 500; font-size: 13.5px;
+    padding: 10px 18px; cursor: pointer; margin-left: 8px;
+  }
+
+  .fab-demo {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent); color: var(--accent-text);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700; border: none;
+  }
+
+  .input-demo {
+    width: 100%; padding: 10px 12px; border-radius: var(--radius-sm);
+    background: var(--bg-elevated); border: 1px solid var(--border-strong);
+    color: var(--text-primary); font-family: var(--font-ui); font-size: 13.5px;
+  }
+  .input-demo::placeholder { color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <svg width="140" height="50" viewBox="0 0 277 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M43 42L37 42L37 10L43 10L43 42Z" fill="#DAFF48"/>
+      <path d="M43 90L37 90L37 58L43 58L43 90Z" fill="#DAFF48"/>
+      <path d="M-1.66893e-06 53L-1.40666e-06 47L32 47L32 53L-1.66893e-06 53Z" fill="#DAFF48"/>
+      <path d="M48 53L48 47L80 47L80 53L48 53Z" fill="#DAFF48"/>
+      <path d="M67 50C67 35.0883 54.9117 23 40 23C25.0883 23 13 35.0883 13 50C13 64.9117 25.0883 77 40 77V83C21.7746 83 7 68.2254 7 50C7 31.7746 21.7746 17 40 17C58.2254 17 73 31.7746 73 50C73 68.2254 58.2254 83 40 83V77C54.9117 77 67 64.9117 67 50Z" fill="#DAFF48"/>
+      <path d="M83 84L108.8 14H117.7L143.4 84H134.5L113.2 24.5L91.8 84H83ZM94.8 66L97.2 59.2H128.9L131.3 66H94.8ZM161.007 84C158.007 84 155.407 83.5333 153.207 82.6C151.007 81.6667 149.307 80.1 148.107 77.9C146.974 75.6333 146.407 72.6 146.407 68.8V40.7H137.607V33.6H146.407L147.507 21.4H154.807V33.6H169.407V40.7H154.807V68.8C154.807 71.9333 155.44 74.0667 156.707 75.2C157.974 76.2667 160.207 76.8 163.407 76.8H168.807V84H161.007ZM172.367 84V12H180.767V84H172.367ZM203.033 85.2C198.966 85.2 195.566 84.5 192.833 83.1C190.099 81.6333 188.066 79.7333 186.733 77.4C185.399 75 184.733 72.4 184.733 69.6C184.733 66.2 185.599 63.3333 187.333 61C189.133 58.6 191.633 56.8 194.833 55.6C198.099 54.3333 201.933 53.7 206.333 53.7H219.633C219.633 50.5667 219.133 47.9667 218.133 45.9C217.199 43.7667 215.799 42.1667 213.933 41.1C212.133 40.0333 209.866 39.5 207.133 39.5C203.933 39.5 201.166 40.3 198.833 41.9C196.499 43.5 195.066 45.8667 194.533 49H185.933C186.333 45.4 187.533 42.4 189.533 40C191.599 37.5333 194.199 35.6667 197.333 34.4C200.466 33.0667 203.733 32.4 207.133 32.4C211.799 32.4 215.666 33.2667 218.733 35C221.866 36.6667 224.199 39.0333 225.733 42.1C227.266 45.1 228.033 48.6667 228.033 52.8V84H220.533L220.033 75.1C219.366 76.5 218.499 77.8333 217.433 79.1C216.433 80.3 215.233 81.3667 213.833 82.3C212.433 83.1667 210.833 83.8667 209.033 84.4C207.299 84.9333 205.299 85.2 203.033 85.2ZM204.333 78.1C206.666 78.1 208.766 77.6333 210.633 76.7C212.566 75.7 214.199 74.3667 215.533 72.7C216.866 70.9667 217.866 69.0667 218.533 67C219.266 64.9333 219.633 62.7667 219.633 60.5V60.2H207.033C203.766 60.2 201.133 60.6 199.133 61.4C197.133 62.1333 195.699 63.2 194.833 64.6C193.966 65.9333 193.533 67.4667 193.533 69.2C193.533 71 193.933 72.5667 194.733 73.9C195.599 75.2333 196.833 76.2667 198.433 77C200.099 77.7333 202.066 78.1 204.333 78.1ZM252.027 85.2C247.827 85.2 244.161 84.5 241.027 83.1C237.961 81.7 235.494 79.7667 233.627 77.3C231.827 74.7667 230.727 71.8 230.327 68.4H238.927C239.261 70.1333 239.961 71.7333 241.027 73.2C242.094 74.6667 243.527 75.8667 245.327 76.8C247.194 77.6667 249.461 78.1 252.127 78.1C254.461 78.1 256.394 77.7667 257.927 77.1C259.461 76.3667 260.594 75.4 261.327 74.2C262.127 73 262.527 71.7 262.527 70.3C262.527 68.2333 262.027 66.6667 261.027 65.6C260.094 64.5333 258.694 63.7 256.827 63.1C254.961 62.4333 252.694 61.8667 250.027 61.4C247.827 61 245.661 60.4667 243.527 59.8C241.394 59.1333 239.494 58.2667 237.827 57.2C236.161 56.0667 234.827 54.7 233.827 53.1C232.894 51.5 232.427 49.5333 232.427 47.2C232.427 44.3333 233.161 41.8 234.627 39.6C236.094 37.3333 238.194 35.5667 240.927 34.3C243.727 33.0333 246.961 32.4 250.627 32.4C256.027 32.4 260.394 33.7 263.727 36.3C267.061 38.9 269.027 42.6667 269.627 47.6H261.327C260.994 45.0667 259.894 43.1 258.027 41.7C256.227 40.2333 253.727 39.5 250.527 39.5C247.394 39.5 244.994 40.1333 243.327 41.4C241.727 42.6667 240.927 44.3333 240.927 46.4C240.927 47.7333 241.361 48.9333 242.227 50C243.161 51 244.494 51.8667 246.227 52.6C248.027 53.3333 250.227 53.9333 252.827 54.4C256.161 55 259.194 55.8 261.927 56.8C264.661 57.8 266.861 59.3 268.527 61.3C270.261 63.2333 271.127 66 271.127 69.6C271.127 72.7333 270.327 75.4667 268.727 77.8C267.194 80.1333 264.994 81.9667 262.127 83.3C259.261 84.5667 255.894 85.2 252.027 85.2Z" fill="white"/>
+    </svg>
+  </header>
+  <h1>디자인 시스템 · 다크 UI</h1>
+
+  <section>
+    <div class="kicker">Color · Base</div>
+    <h2>배경 &amp; 텍스트</h2>
+    <p class="desc">로고의 라임(#DAFF48)이 유일한 브랜드 컬러입니다 — 눈에 띄어야 하는 곳에만 아껴 씁니다.</p>
+    <div class="swatch-row">
+      <div class="swatch"><div class="swatch-fill" style="background:#121214"></div><div class="swatch-meta"><span class="name">bg-base</span><span class="hex">#121214</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#1B1B1E"></div><div class="swatch-meta"><span class="name">bg-surface</span><span class="hex">#1B1B1E</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#232327"></div><div class="swatch-meta"><span class="name">bg-elevated</span><span class="hex">#232327</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#2E2E33"></div><div class="swatch-meta"><span class="name">border</span><span class="hex">#2E2E33</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#DAFF48"></div><div class="swatch-meta"><span class="name">accent (brand)</span><span class="hex">#DAFF48</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#F5F5F7"></div><div class="swatch-meta"><span class="name">text-primary</span><span class="hex">#F5F5F7</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#9A9AA2"></div><div class="swatch-meta"><span class="name">text-secondary</span><span class="hex">#9A9AA2</span></div></div>
+      <div class="swatch"><div class="swatch-fill" style="background:#6B6B72"></div><div class="swatch-meta"><span class="name">text-muted</span><span class="hex">#6B6B72</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">Typography</div>
+    <h2>Roboto (UI) + DM Sans (Hero 포인트)</h2>
+    <p class="desc">헤딩·버튼·라벨은 Roboto 500, 본문은 Roboto 400 — 두 굵기만 씁니다. DM Sans Regular는 히어로 문구 전용입니다.</p>
+    <div class="type-row"><span class="type-label">Hero · DM Sans · 400 · 28px</span><span class="type-sample" style="font-family: var(--font-hero); font-weight:400; font-size:28px;">다시 여는 순간을 1초로</span></div>
+    <div class="type-row"><span class="type-label">Heading · Roboto · 500 · 24px</span><span class="type-sample" style="font-weight:500; font-size:24px;">브랜딩 레퍼런스</span></div>
+    <div class="type-row"><span class="type-label">Subhead · Roboto · 500 · 16px</span><span class="type-sample" style="font-weight:500; font-size:16px;">12개 저장됨</span></div>
+    <div class="type-row"><span class="type-label">Body · Roboto · 400 · 14px</span><span class="type-sample" style="font-weight:400; font-size:14px; color:var(--text-secondary);">카테고리 버튼 하나로 저장해둔 사이트를 즉시 다시 엽니다.</span></div>
+    <div class="type-row"><span class="type-label">Caption · Roboto · 400 · 12px</span><span class="type-sample" style="font-weight:400; font-size:12px; color:var(--text-muted);">방금 전 업데이트됨</span></div>
+  </section>
+
+  <section>
+    <div class="kicker">Hero specimen</div>
+    <h2>히어로 섹션 포인트 서체</h2>
+    <p class="desc">랜딩 페이지 히어로 문구에만 DM Sans Regular를 쓰고, 나머지 UI 텍스트는 전부 Roboto를 유지합니다.</p>
+    <div class="hero">
+      <p class="hero-line">저장은 그대로, <span class="accent">다시 여는 순간</span>만 1초로.</p>
+      <p class="hero-sub">DM Sans Regular (400) · 34px 권장 크기</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">Tags · Notion-style</div>
+    <h2>22개 Type 태그 (10개 색상군)</h2>
+    <p class="desc">색이 순서가 아니라 의미를 가지도록, 성격이 비슷한 태그끼리 같은 색을 공유합니다.</p>
+
+    <div class="tag-group-title">Gray — 유틸리티</div>
+    <div class="tag-row">
+      <span class="tag" style="background:#3A3A3D; color:#C7C7CC;">Tool</span>
+      <span class="tag" style="background:#3A3A3D; color:#C7C7CC;">Library</span>
+    </div>
+
+    <div class="tag-group-title">Brown — 실체가 있는 에셋</div>
+    <div class="tag-row">
+      <span class="tag" style="background:#4A382E; color:#D8B79A;">Mockup</span>
+      <span class="tag" style="background:#4A382E; color:#D8B79A;">3D</span>
+    </div>
+
+    <div class="tag-group-title">Orange — UI 구성 요소</div>
+    <div class="tag-row">
+      <span class="tag" style="background:#5A3B1E; color:#F3A85B;">Icon</span>
+      <span class="tag" style="background:#5A3B1E; color:#F3A85B;">Component</span>
+    </div>
+
+    <div class="tag-group-title">Yellow — 스타일 토큰</div>
+    <div class="tag-row">
+      <span class="tag" style="background:#524A16; color:#E8D468;">Color</span>
+      <span class="tag" style="background:#524A16; color:#E8D468;">Font</span>
+    </div>
+
+    <div class="tag-group-title">Green — 제품 플랫폼</div>
+    <div class="tag-row">
+      <span class="tag" style="background:#24402A; color:#86D89A;">Web</span>
+      <span class="tag" style="background:#24402A; color:#86D89A;">App</span>
+      <span class="tag" style="background:#24402A; color:#86D89A;">Ecommerce</span>
+    </div>
+
+    <div class="tag-group-title">Teal — 행동 · 모션</div>
+    <div class="tag-row">
+      <span class="tag" style="background:#1F4547; color:#7FD4D9;">UX</span>
+      <span class="tag" style="background:#1F4547; color:#7FD4D9;">Interaction</span>
+      <span class="tag" style="background:#1F4547; color:#7FD4D9;">Motion</span>
+    </div>
+
+    <div class="tag-group-title">Blue — 레퍼런스 · 비주얼</div>
+    <div class="tag-row">
+      <span class="tag" style="background:#1F3A5F; color:#8AB4F8;">Inspiration</span>
+      <span class="tag" style="background:#1F3A5F; color:#8AB4F8;">Portfolio</span>
+      <span class="tag" style="background:#1F3A5F; color:#8AB4F8;">Image</span>
+    </div>
+
+    <div class="tag-group-title">Purple — 시스템 · 고급</div>
+    <div class="tag-row">
+      <span class="tag" style="background:#3A2E54; color:#C3A6F0;">AI Design</span>
+      <span class="tag" style="background:#3A2E54; color:#C3A6F0;">Design System</span>
+    </div>
+
+    <div class="tag-group-title">Pink — 크리에이티브 아이덴티티</div>
+    <div class="tag-row">
+      <span class="tag" style="background:#55293F; color:#F0A8C7;">Branding</span>
+      <span class="tag" style="background:#55293F; color:#F0A8C7;">Graphic Design</span>
+    </div>
+
+    <div class="tag-group-title">Red — 커뮤니케이션</div>
+    <div class="tag-row">
+      <span class="tag" style="background:#55231F; color:#F5A399;">Email</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">Components</div>
+    <h2>버튼 · 입력 · 카드</h2>
+    <p class="desc">라임은 primary 버튼과 FAB처럼 "지금 눌러야 하는 것"에만 사용합니다.</p>
+    <div class="comp-grid">
+      <div class="card">
+        <div class="card-title">버튼 &amp; 입력</div>
+        <div class="card-sub">기본 상태</div>
+        <div style="margin-bottom:16px;">
+          <button class="btn-primary">저장하기</button>
+          <button class="btn-secondary">취소</button>
+        </div>
+        <input class="input-demo" placeholder="사이트 이름 검색" />
+      </div>
+      <div class="card">
+        <div class="card-title">Dribbble</div>
+        <div class="card-sub">dribbble.com</div>
+        <div class="tag-row" style="margin-bottom:16px;">
+          <span class="tag" style="background:#24402A; color:#86D89A;">App</span>
+          <span class="tag" style="background:#24402A; color:#86D89A;">Web</span>
+          <span class="tag" style="background:#55293F; color:#F0A8C7;">Branding</span>
+          <span class="tag" style="background:#1F3A5F; color:#8AB4F8;">Inspiration</span>
+        </div>
+        <button class="fab-demo" aria-label="열기">↗</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
