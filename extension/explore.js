@@ -7,6 +7,27 @@
   const GROUP_PRIORITY = window.ATLAS_GROUP_PRIORITY;
   const VIEWS = window.ATLAS_VIEWS;
 
+  // ----- storage: chrome.storage.local in the extension, localStorage fallback
+  //        when this page is opened directly as a file -----
+  const hasChromeStore = typeof chrome !== "undefined" && chrome.storage && chrome.storage.local;
+  const atlasStore = hasChromeStore ? chrome.storage.local : {
+    get(defaults, cb) {
+      const out = {};
+      Object.keys(defaults).forEach(k => {
+        try { const v = localStorage.getItem("atlas." + k); out[k] = v ? JSON.parse(v) : defaults[k]; }
+        catch (e) { out[k] = defaults[k]; }
+      });
+      cb(out);
+    },
+    set(obj) {
+      Object.keys(obj).forEach(k => {
+        try { localStorage.setItem("atlas." + k, JSON.stringify(obj[k])); } catch (e) { /* ignore */ }
+      });
+    },
+  };
+  const atlasStoreChanges = (hasChromeStore && chrome.storage.onChanged)
+    ? chrome.storage.onChanged : { addListener() {} };
+
   // ----- tag colour lookup -----
   const TAG_ORDER = [];
   const TAG_STYLE = {};
@@ -36,7 +57,7 @@
   const favorites = new Set();
   function persist() {
     const list = SITES.filter(s => favorites.has(s.domain)).map(s => ({ n: s.n, u: s.u, domain: s.domain }));
-    chrome.storage.local.set({ favorites: list });
+    atlasStore.set({ favorites: list });
   }
 
   // ----- recently visited (chrome.storage.local) -----
@@ -44,12 +65,12 @@
   let recent = [];
   function recordVisit(s) {
     recent = [{ n: s.n, u: s.u, domain: s.domain }].concat(recent.filter(r => r.domain !== s.domain)).slice(0, RECENT_MAX);
-    chrome.storage.local.set({ recent: recent });
+    atlasStore.set({ recent: recent });
     renderRecent();
   }
   function removeRecent(domain) {
     recent = recent.filter(r => r.domain !== domain);
-    chrome.storage.local.set({ recent: recent });
+    atlasStore.set({ recent: recent });
     renderRecent();
   }
 
@@ -295,14 +316,14 @@
   });
 
   // ----- load favorites + recents, then render -----
-  chrome.storage.local.get({ favorites: [], recent: [] }, (data) => {
+  atlasStore.get({ favorites: [], recent: [] }, (data) => {
     (data.favorites || []).forEach(f => favorites.add(f.domain));
     recent = (data.recent || []).slice(0, RECENT_MAX);
     syncStars();
     renderRecent();
     apply();
   });
-  chrome.storage.onChanged.addListener((changes, area) => {
+  atlasStoreChanges.addListener((changes, area) => {
     if (area !== "local") return;
     if (changes.favorites) {
       favorites.clear();
