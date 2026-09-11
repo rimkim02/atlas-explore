@@ -59,9 +59,10 @@
       }
       .fab {
         position: relative; width: 56px; height: 56px; padding: 0; border: 0;
-        background: transparent; border-radius: 50%; cursor: pointer;
+        background: transparent; border-radius: 50%; cursor: pointer; touch-action: none;
         filter: drop-shadow(0 10px 26px rgba(0,0,0,.55)); transition: transform .16s ease;
       }
+      .dock.is-dragging .fab { transition: none; transform: none; }
       .fab svg { display: block; width: 56px; height: 56px; }
       .fab:hover { transform: translateY(-2px); }
       .fab:active { transform: translateY(0); }
@@ -86,8 +87,62 @@
 
   const stack = root.getElementById("stack");
   const badge = root.getElementById("badge");
+  const dock = root.getElementById("dock");
+  const fabBtn = root.getElementById("fab");
 
-  root.getElementById("fab").addEventListener("click", () => {
+  // ----- vertical drag — stays pinned to the right edge, moves up/down only -----
+  const DRAG_MARGIN = 12;
+  let dragging = false, dragMoved = false, dragStartY = 0, dragStartBottom = 24, dragPointerId = null;
+  let suppressClick = false;
+
+  function clampBottom(v) {
+    const h = dock.getBoundingClientRect().height || 56;
+    const max = Math.max(DRAG_MARGIN, window.innerHeight - h - DRAG_MARGIN);
+    return Math.min(Math.max(v, DRAG_MARGIN), max);
+  }
+  function currentBottom() {
+    const n = parseFloat(getComputedStyle(dock).bottom);
+    return isNaN(n) ? 24 : n;
+  }
+
+  fabBtn.addEventListener("pointerdown", e => {
+    if (e.button !== 0) return;
+    dragging = true;
+    dragMoved = false;
+    dragStartY = e.clientY;
+    dragStartBottom = currentBottom();
+    dragPointerId = e.pointerId;
+    try { fabBtn.setPointerCapture(dragPointerId); } catch (err) { /* ignore */ }
+    dock.classList.add("is-dragging");
+  });
+  fabBtn.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    const dy = e.clientY - dragStartY;
+    if (Math.abs(dy) > 3) dragMoved = true;
+    dock.style.bottom = clampBottom(dragStartBottom - dy) + "px";
+  });
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    dock.classList.remove("is-dragging");
+    if (dragMoved) {
+      suppressClick = true;
+      try { chrome.storage.local.set({ fabBottom: parseFloat(dock.style.bottom) }); } catch (err) { /* ignore */ }
+    }
+  }
+  fabBtn.addEventListener("pointerup", endDrag);
+  fabBtn.addEventListener("pointercancel", endDrag);
+  window.addEventListener("resize", () => {
+    dock.style.bottom = clampBottom(currentBottom()) + "px";
+  });
+  try {
+    chrome.storage.local.get({ fabBottom: null }, ({ fabBottom }) => {
+      if (typeof fabBottom === "number") dock.style.bottom = clampBottom(fabBottom) + "px";
+    });
+  } catch (err) { /* ignore */ }
+
+  fabBtn.addEventListener("click", () => {
+    if (suppressClick) { suppressClick = false; return; }
     chrome.runtime.sendMessage({ type: "atlas:open-explore" });
   });
 
